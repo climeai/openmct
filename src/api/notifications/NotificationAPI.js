@@ -75,13 +75,15 @@ export default class NotificationAPI extends EventEmitter {
      * Info notifications are low priority informational messages for the user. They will be auto-destroy after a brief
      * period of time.
      * @param {string} message The message to display to the user
+     * @param {Object} options
      * @returns {InfoNotification}
      */
-    info(message) {
+    info(message, options = {}) {
         let notificationModel = {
             message: message,
             autoDismiss: true,
-            severity: "info"
+            severity: "info",
+            options
         }
         return this._notify(notificationModel);
     }
@@ -89,12 +91,14 @@ export default class NotificationAPI extends EventEmitter {
     /**
      * Present an alert to the user.
      * @param {string} message The message to display to the user.
+     * @param {Object} options
      * @returns {Notification}
      */
-    alert(message) {
+    alert(message, options = {}) {
         let notificationModel = {
             message: message,
-            severity: "alert"
+            severity: "alert",
+            options
         }
         return this._notify(notificationModel);
     }
@@ -102,12 +106,14 @@ export default class NotificationAPI extends EventEmitter {
     /**
      * Present an error message to the user
      * @param {string} message
+     * @param {Object} options
      * @returns {Notification}
      */
-    error(message) {
+    error(message, options = {}) {
         let notificationModel = {
             message: message,
-            severity: "error"
+            severity: "error",
+            options
         }
         return this._notify(notificationModel);
     }
