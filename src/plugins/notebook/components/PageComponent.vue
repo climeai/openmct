@@ -1,23 +1,20 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="[{ 'is-selected': section.isSelected, 'is-notebook-default' : (defaultSectionId === section.id) }]"
-     :data-id="section.id"
-     @click="selectSection"
+     :class="[{ 'is-selected': page.isSelected, 'is-notebook-default' : (defaultPageId === page.id) }]"
+     :data-id="page.id"
+     @click="selectPage"
 >
     <span class="c-list__item__name js-list__item__name"
-          :data-id="section.id"
+          :data-id="page.id"
           @keydown.enter="updateName"
           @blur="updateName"
-    >{{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}</span>
+    >{{ page.name.length ? page.name : `Unnamed ${pageTitle}` }}</span>
     <PopupMenu :popup-menu-items="popupMenuItems" />
 </div>
 </template>
 
-<style lang="scss">
-</style>
-
 <script>
-import PopupMenu from './popup-menu.vue';
+import PopupMenu from './PopupMenu.vue';
 import RemoveDialog from '../utils/removeDialog';
 
 export default {
@@ -26,17 +23,17 @@ export default {
         PopupMenu
     },
     props: {
-        defaultSectionId: {
+        defaultPageId: {
             type: String,
             default() {
                 return '';
             }
         },
-        section: {
+        page: {
             type: Object,
             required: true
         },
-        sectionTitle: {
+        pageTitle: {
             type: String,
             default() {
                 return '';
@@ -46,12 +43,12 @@ export default {
     data() {
         return {
             popupMenuItems: [],
-            removeActionString: `Delete ${this.sectionTitle}`
+            removeActionString: `Delete ${this.pageTitle}`
         }
     },
     watch: {
-        section(newSection) {
-            this.toggleContentEditable(newSection);
+        page(newPage) {
+            this.toggleContentEditable(newPage);
         }
     },
     mounted() {
@@ -60,62 +57,60 @@ export default {
     },
     methods: {
         addPopupMenuItems() {
-            const removeSection = {
+            const removePage = {
                 cssClass: 'icon-trash',
                 name: this.removeActionString,
                 callback: this.getRemoveDialog.bind(this)
             }
 
-            this.popupMenuItems = [removeSection];
+            this.popupMenuItems = [removePage];
         },
-        deleteSection(success) {
+        deletePage(success) {
             if (!success) {
                 return;
             }
 
-            this.$emit('deleteSection', this.section.id);
+            this.$emit('deletePage', this.page.id);
         },
         getRemoveDialog() {
-            const message = 'This action will delete this section and all of its pages and entries. Do you want to continue?';
+            const message = 'This action will delete this page and all of its entries. Do you want to continue?';
             const options = {
                 name: this.removeActionString,
-                callback: this.deleteSection.bind(this),
+                callback: this.deletePage.bind(this),
                 message
             }
-
             const removeDialog = new RemoveDialog(this.openmct, options);
             removeDialog.show();
         },
-        selectSection(event) {
+        selectPage(event) {
             const target = event.target;
-            const section = target.closest('.js-list__item');
-            const input = section.querySelector('.js-list__item__name');
+            const page = target.closest('.js-list__item');
+            const input = page.querySelector('.js-list__item__name');
 
-            if (section.className.indexOf('is-selected') > -1) {
+            if (page.className.indexOf('is-selected') > -1) {
                 input.contentEditable = true;
                 input.classList.add('c-input-inline');
                 return;
             }
 
             const id = target.dataset.id;
-
             if (!id) {
                 return;
             }
 
-            this.$emit('selectSection', id);
+            this.$emit('selectPage', id);
         },
-        toggleContentEditable(section = this.section) {
-            const sectionTitle = this.$el.querySelector('span');
-            sectionTitle.contentEditable = section.isSelected;
+        toggleContentEditable(page = this.page) {
+            const pageTitle = this.$el.querySelector('span');
+            pageTitle.contentEditable = page.isSelected;
         },
         updateName(event) {
             const target = event.target;
+            const name = target.textContent.toString();
             target.contentEditable = false;
             target.classList.remove('c-input-inline');
-            const name = target.textContent.trim();
 
-            if (this.section.name === name) {
+            if (this.page.name === name) {
                 return;
             }
 
@@ -123,7 +118,7 @@ export default {
                 return;
             }
 
-            this.$emit('renameSection', Object.assign(this.section, { name }));
+            this.$emit('renamePage', Object.assign(this.page, { name }));
         }
     }
 }
