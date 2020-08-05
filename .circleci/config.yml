@@ -23,6 +23,9 @@ jobs:
         - run:
             name: npm run lint
             command: npm run lint
+        - run:
+            command: cat /sys/fs/cgroup/memory/memory.max_usage_in_bytes
+            when: always
         - store_artifacts:
             path: dist
             prefix: dist
