@@ -63,7 +63,7 @@ module.exports = (config) => {
                 base: 'Chrome',
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
-            }
+            },
         },
         colors: true,
         logLevel: config.LOG_INFO,
@@ -96,6 +96,7 @@ module.exports = (config) => {
             logLevel: 'warn'
         },
         singleRun: true,
+        concurrency: 1,
         browserNoActivityTimeout: 90000
     });
 }
